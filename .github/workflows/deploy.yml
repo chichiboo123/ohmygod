@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - claude/board-game-creator-app-l02re
   workflow_dispatch:
 
 permissions:
