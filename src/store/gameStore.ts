@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { v4 as uuidv4 } from 'uuid';
+import { getDimensionsForTotal } from './boardLayout';
 
 // Types
 export type Theme = 'default' | 'forest' | 'space' | 'city' | 'ocean' | 'desert';
@@ -9,6 +10,8 @@ export interface GameSettings {
   title: string;
   theme: Theme;
   boardSize: number;
+  boardWidth: number;
+  boardHeight: number;
   currency: string;
   players: number;
   lapReward: number;
@@ -68,10 +71,14 @@ const PLAYER_COLORS = [
   '#06b6d4', '#84cc16',
 ];
 
+const initDim = getDimensionsForTotal(20);
+
 const defaultSettings: GameSettings = {
   title: '',
   theme: 'default',
-  boardSize: 20,
+  boardSize: initDim.total,
+  boardWidth: initDim.width,
+  boardHeight: initDim.height,
   currency: '돈',
   players: 4,
   lapReward: 200,
@@ -123,17 +130,15 @@ function createPlayers(count: number): Player[] {
 }
 
 interface GameStore {
-  // State
   settings: GameSettings;
   tiles: Tile[];
   cards: EventCard[];
   playState: PlayState;
   activeTab: string;
 
-  // Settings actions
   updateSettings: (partial: Partial<GameSettings>) => void;
+  setBoardDimensions: (width: number, height: number) => void;
 
-  // Tile actions
   setTiles: (tiles: Tile[]) => void;
   updateTile: (id: string, partial: Partial<Tile>) => void;
   addTile: () => void;
@@ -142,12 +147,10 @@ interface GameStore {
   regenerateTiles: () => void;
   recalcAllTiers: () => void;
 
-  // Card actions
   addCard: () => void;
   updateCard: (id: string, partial: Partial<EventCard>) => void;
   removeCard: (id: string) => void;
 
-  // Play actions
   startGame: () => void;
   pauseGame: () => void;
   resumeGame: () => void;
@@ -159,7 +162,6 @@ interface GameStore {
   tickTimer: () => void;
   setActiveTab: (tab: string) => void;
 
-  // Export/Import
   exportJSON: () => string;
   importJSON: (json: string) => boolean;
   getShareableState: () => object;
@@ -189,12 +191,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
       const newSettings = { ...state.settings, ...partial };
       let newTiles = state.tiles;
 
-      // Regenerate tiles if board size changed
       if (partial.boardSize !== undefined && partial.boardSize !== state.settings.boardSize) {
         newTiles = generateDefaultTiles(partial.boardSize, newSettings.multiplierRatio);
       }
 
-      // Recalculate tiers if multiplier changed
       if (partial.multiplierRatio !== undefined && partial.multiplierRatio !== state.settings.multiplierRatio) {
         newTiles = newTiles.map((t) => ({
           ...t,
@@ -205,6 +205,14 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
       return { settings: newSettings, tiles: newTiles };
     });
+  },
+
+  setBoardDimensions: (width, height) => {
+    const total = 2 * (width + height) - 4;
+    set((state) => ({
+      settings: { ...state.settings, boardSize: total, boardWidth: width, boardHeight: height },
+      tiles: generateDefaultTiles(total, state.settings.multiplierRatio),
+    }));
   },
 
   setTiles: (tiles) => set({ tiles }),
@@ -259,27 +267,20 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   shuffleTiles: () => {
     set((state) => {
-      const fixed = state.tiles.filter((t) => t.isFixed);
       const movable = state.tiles.filter((t) => !t.isFixed);
-
-      // Fisher-Yates shuffle on movable tiles
       for (let i = movable.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [movable[i], movable[j]] = [movable[j], movable[i]];
       }
-
-      // Rebuild array preserving fixed tile positions
       const result: Tile[] = [];
       let mIdx = 0;
       for (let i = 0; i < state.tiles.length; i++) {
-        const orig = state.tiles[i];
-        if (orig.isFixed) {
-          result.push(orig);
+        if (state.tiles[i].isFixed) {
+          result.push(state.tiles[i]);
         } else {
           result.push(movable[mIdx++]);
         }
       }
-
       return { tiles: result };
     });
   },
@@ -331,7 +332,6 @@ export const useGameStore = create<GameStore>((set, get) => ({
   startGame: () => {
     const { settings, tiles } = get();
     if (tiles.length === 0) return;
-
     const players = createPlayers(settings.players);
     set({
       playState: {
@@ -346,36 +346,24 @@ export const useGameStore = create<GameStore>((set, get) => ({
         lastEventCard: null,
         winner: null,
       },
-      // Reset tile ownership
       tiles: tiles.map((t) => ({ ...t, owner: null, ownerTier: 0 })),
     });
   },
 
   pauseGame: () => {
-    set((state) => ({
-      playState: { ...state.playState, isPaused: true },
-    }));
+    set((state) => ({ playState: { ...state.playState, isPaused: true } }));
   },
 
   resumeGame: () => {
-    set((state) => ({
-      playState: { ...state.playState, isPaused: false },
-    }));
+    set((state) => ({ playState: { ...state.playState, isPaused: false } }));
   },
 
   resetGame: () => {
     set((state) => ({
       playState: {
-        isPlaying: false,
-        isPaused: false,
-        isGameOver: false,
-        currentPlayerIndex: 0,
-        players: [],
-        diceResult: [],
-        isAutoMode: true,
-        timeRemaining: 0,
-        lastEventCard: null,
-        winner: null,
+        isPlaying: false, isPaused: false, isGameOver: false,
+        currentPlayerIndex: 0, players: [], diceResult: [],
+        isAutoMode: true, timeRemaining: 0, lastEventCard: null, winner: null,
       },
       tiles: state.tiles.map((t) => ({ ...t, owner: null, ownerTier: 0 })),
     }));
@@ -397,64 +385,43 @@ export const useGameStore = create<GameStore>((set, get) => ({
         const current = { ...players[state.playState.currentPlayerIndex] };
 
         if (current.isEliminated) {
-          // Skip eliminated players
           const nextIdx = findNextPlayer(players, state.playState.currentPlayerIndex);
-          return {
-            playState: {
-              ...state.playState,
-              diceResult: results,
-              currentPlayerIndex: nextIdx,
-            },
-          };
+          return { playState: { ...state.playState, diceResult: results, currentPlayerIndex: nextIdx } };
         }
 
         const boardSize = state.tiles.length;
         const oldPos = current.position;
         const newPos = (oldPos + total) % boardSize;
 
-        // Check if passed start
         if (oldPos + total >= boardSize) {
           current.laps += 1;
           current.score += state.settings.lapReward;
         }
-
         current.position = newPos;
 
-        // Land on tile - pay cost or collect from owned
         const tile = tiles[newPos];
         if (tile && tile.tier1 > 0) {
           if (tile.owner !== null && tile.owner !== current.id) {
-            // Pay rent to owner
             const rent = tile.ownerTier === 3 ? tile.fullControl : tile.ownerTier === 2 ? tile.tier2 : tile.tier1;
             current.score -= rent;
             const ownerIdx = players.findIndex((p) => p.id === tile.owner);
             if (ownerIdx >= 0) {
               players[ownerIdx] = { ...players[ownerIdx], score: players[ownerIdx].score + rent };
             }
-          } else if (tile.owner === null) {
-            // Buy tile
-            if (current.score >= tile.tier1) {
-              current.score -= tile.tier1;
-              const newTiles = [...state.tiles];
-              newTiles[newPos] = { ...newTiles[newPos], owner: current.id, ownerTier: 1 };
-              players[state.playState.currentPlayerIndex] = current;
-              const nextIdx = findNextPlayer(players, state.playState.currentPlayerIndex);
-              const gameOverCheck = checkGameOver(state.settings, players, state.playState);
-              return {
-                tiles: newTiles,
-                playState: {
-                  ...state.playState,
-                  diceResult: results,
-                  players,
-                  currentPlayerIndex: nextIdx,
-                  ...gameOverCheck,
-                },
-              };
-            }
+          } else if (tile.owner === null && current.score >= tile.tier1) {
+            current.score -= tile.tier1;
+            const newTiles = [...state.tiles];
+            newTiles[newPos] = { ...newTiles[newPos], owner: current.id, ownerTier: 1 };
+            players[state.playState.currentPlayerIndex] = current;
+            const nextIdx = findNextPlayer(players, state.playState.currentPlayerIndex);
+            const gameOverCheck = checkGameOver(state.settings, players, state.playState);
+            return {
+              tiles: newTiles,
+              playState: { ...state.playState, diceResult: results, players, currentPlayerIndex: nextIdx, ...gameOverCheck },
+            };
           }
         }
 
-        // Survival check
         if (current.score <= 0 && state.settings.gameOverCondition === 'survival') {
           current.isEliminated = true;
         }
@@ -464,20 +431,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
         const gameOverCheck = checkGameOver(state.settings, players, state.playState);
 
         return {
-          playState: {
-            ...state.playState,
-            diceResult: results,
-            players,
-            currentPlayerIndex: nextIdx,
-            ...gameOverCheck,
-          },
+          playState: { ...state.playState, diceResult: results, players, currentPlayerIndex: nextIdx, ...gameOverCheck },
         };
       });
     } else {
-      // Manual mode: just show dice result
-      set((state) => ({
-        playState: { ...state.playState, diceResult: results },
-      }));
+      set((state) => ({ playState: { ...state.playState, diceResult: results } }));
     }
   },
 
@@ -501,47 +459,29 @@ export const useGameStore = create<GameStore>((set, get) => ({
       const gameOverCheck = checkGameOver(state.settings, players, state.playState);
 
       return {
-        playState: {
-          ...state.playState,
-          players,
-          currentPlayerIndex: nextIdx,
-          ...gameOverCheck,
-        },
+        playState: { ...state.playState, players, currentPlayerIndex: nextIdx, ...gameOverCheck },
       };
     });
   },
 
   drawEventCard: () => {
-    const { cards, playState } = get();
+    const { cards } = get();
     if (cards.length === 0) return;
-
     const randomCard = cards[Math.floor(Math.random() * cards.length)];
-
     set((state) => {
       const players = [...state.playState.players];
       const current = { ...players[state.playState.currentPlayerIndex] };
       current.score += randomCard.value;
-
       if (current.score <= 0 && state.settings.gameOverCondition === 'survival') {
         current.isEliminated = true;
       }
-
       players[state.playState.currentPlayerIndex] = current;
-
-      return {
-        playState: {
-          ...state.playState,
-          players,
-          lastEventCard: randomCard,
-        },
-      };
+      return { playState: { ...state.playState, players, lastEventCard: randomCard } };
     });
   },
 
   toggleAutoMode: () => {
-    set((state) => ({
-      playState: { ...state.playState, isAutoMode: !state.playState.isAutoMode },
-    }));
+    set((state) => ({ playState: { ...state.playState, isAutoMode: !state.playState.isAutoMode } }));
   },
 
   tickTimer: () => {
@@ -549,20 +489,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
       if (!state.playState.isPlaying || state.playState.isPaused) return state;
       const newTime = state.playState.timeRemaining - 1;
       if (newTime <= 0) {
-        const players = state.playState.players;
-        const best = [...players].sort((a, b) => b.score - a.score)[0];
-        return {
-          playState: {
-            ...state.playState,
-            timeRemaining: 0,
-            isGameOver: true,
-            winner: best,
-          },
-        };
+        const best = [...state.playState.players].sort((a, b) => b.score - a.score)[0];
+        return { playState: { ...state.playState, timeRemaining: 0, isGameOver: true, winner: best } };
       }
-      return {
-        playState: { ...state.playState, timeRemaining: newTime },
-      };
+      return { playState: { ...state.playState, timeRemaining: newTime } };
     });
   },
 
@@ -577,8 +507,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
     try {
       const data = JSON.parse(json);
       if (data.settings && data.tiles) {
+        const dim = getDimensionsForTotal(data.settings.boardSize || data.tiles.length);
         set({
-          settings: { ...defaultSettings, ...data.settings },
+          settings: { ...defaultSettings, ...data.settings, boardWidth: dim.width, boardHeight: dim.height },
           tiles: data.tiles,
           cards: data.cards || [],
         });
@@ -599,8 +530,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
     try {
       const d = data as { settings?: GameSettings; tiles?: Tile[]; cards?: EventCard[] };
       if (d.settings && d.tiles) {
+        const dim = getDimensionsForTotal(d.settings.boardSize || d.tiles.length);
         set({
-          settings: { ...defaultSettings, ...d.settings },
+          settings: { ...defaultSettings, ...d.settings, boardWidth: dim.width, boardHeight: dim.height },
           tiles: d.tiles,
           cards: d.cards || [],
         });
@@ -634,34 +566,26 @@ function checkGameOver(
   switch (settings.gameOverCondition) {
     case 'maxLaps': {
       const reached = players.find((p) => p.laps >= settings.conditionValue);
-      if (reached) {
-        return { isGameOver: true, winner: reached };
-      }
+      if (reached) return { isGameOver: true, winner: reached };
       break;
     }
     case 'targetCurrency': {
       const reached = players.find((p) => p.score >= settings.conditionValue);
-      if (reached) {
-        return { isGameOver: true, winner: reached };
-      }
+      if (reached) return { isGameOver: true, winner: reached };
       break;
     }
     case 'survival': {
-      if (activePlayers.length <= 1) {
-        return { isGameOver: true, winner: activePlayers[0] || null };
-      }
+      if (activePlayers.length <= 1) return { isGameOver: true, winner: activePlayers[0] || null };
       break;
     }
-    // timeLimit is handled by tickTimer
   }
   return {};
 }
 
-// Theme background configs
-export const THEME_CONFIGS: Record<Theme, { bg: string; accent: string; gradient: string }> = {
+export const THEME_CONFIGS: Record<Theme, { bg: string; accent: string; gradient: string; textDark?: boolean }> = {
   default: { bg: 'bg-slate-100', accent: '#6366f1', gradient: 'from-slate-50 to-indigo-50' },
   forest: { bg: 'bg-green-50', accent: '#16a34a', gradient: 'from-green-50 to-emerald-100' },
-  space: { bg: 'bg-slate-900', accent: '#8b5cf6', gradient: 'from-slate-900 to-purple-900' },
+  space: { bg: 'bg-slate-900', accent: '#8b5cf6', gradient: 'from-slate-900 to-purple-900', textDark: true },
   city: { bg: 'bg-gray-100', accent: '#64748b', gradient: 'from-gray-100 to-blue-50' },
   ocean: { bg: 'bg-cyan-50', accent: '#0891b2', gradient: 'from-cyan-50 to-blue-100' },
   desert: { bg: 'bg-amber-50', accent: '#d97706', gradient: 'from-amber-50 to-orange-100' },

@@ -25,25 +25,24 @@ export default function Navbar({ onHelpOpen }: NavbarProps) {
   const { t, i18n } = useTranslation();
   const { activeTab, setActiveTab } = useGameStore();
   const [langOpen, setLangOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const currentLang = LANGUAGES.find((l) => l.code === i18n.language) || LANGUAGES[0];
 
   return (
     <nav className="bg-white border-b border-border sticky top-0 z-50 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="flex items-center justify-between h-14">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4">
+        <div className="flex items-center justify-between h-12 sm:h-14">
           {/* Logo */}
-          <div className="flex items-center gap-2 shrink-0">
-            <span className="material-icons text-primary" style={{ fontSize: 28 }}>
-              casino
-            </span>
-            <span className="font-bold text-lg text-foreground hidden sm:block">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            <span className="material-icons text-primary" style={{ fontSize: 24 }}>casino</span>
+            <span className="font-bold text-base sm:text-lg text-foreground">
               {t('app.title')}
             </span>
           </div>
 
-          {/* Tabs */}
-          <div className="flex items-center gap-1">
+          {/* Desktop Tabs */}
+          <div className="hidden sm:flex items-center gap-1">
             {TABS.map((tab) => (
               <button
                 key={tab.id}
@@ -54,27 +53,23 @@ export default function Navbar({ onHelpOpen }: NavbarProps) {
                     : 'text-muted hover:bg-slate-100 hover:text-foreground'
                 }`}
               >
-                <span className="material-icons" style={{ fontSize: 18 }}>
-                  {tab.icon}
-                </span>
+                <span className="material-icons" style={{ fontSize: 18 }}>{tab.icon}</span>
                 <span className="hidden md:inline">{t(tab.label)}</span>
               </button>
             ))}
           </div>
 
           {/* Right side */}
-          <div className="flex items-center gap-2">
-            {/* Language Selector */}
+          <div className="flex items-center gap-1.5">
+            {/* Language */}
             <div className="relative">
               <button
                 onClick={() => setLangOpen(!langOpen)}
-                className="flex items-center gap-1 px-2 py-1.5 rounded-lg text-sm border border-border hover:bg-slate-50 transition-colors"
+                className="flex items-center gap-1 px-1.5 sm:px-2 py-1.5 rounded-lg text-sm border border-border hover:bg-slate-50 transition-colors"
               >
-                <span>{currentLang.flag}</span>
+                <span className="text-sm">{currentLang.flag}</span>
                 <span className="hidden sm:inline text-xs">{currentLang.label}</span>
-                <span className="material-icons" style={{ fontSize: 16 }}>
-                  expand_more
-                </span>
+                <span className="material-icons" style={{ fontSize: 16 }}>expand_more</span>
               </button>
               {langOpen && (
                 <>
@@ -83,11 +78,8 @@ export default function Navbar({ onHelpOpen }: NavbarProps) {
                     {LANGUAGES.map((lang) => (
                       <button
                         key={lang.code}
-                        onClick={() => {
-                          i18n.changeLanguage(lang.code);
-                          setLangOpen(false);
-                        }}
-                        className={`w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-slate-50 transition-colors first:rounded-t-lg last:rounded-b-lg ${
+                        onClick={() => { i18n.changeLanguage(lang.code); setLangOpen(false); }}
+                        className={`w-full flex items-center gap-2 px-3 py-2 text-sm hover:bg-slate-50 first:rounded-t-lg last:rounded-b-lg ${
                           i18n.language === lang.code ? 'text-primary font-medium' : 'text-foreground'
                         }`}
                       >
@@ -100,19 +92,47 @@ export default function Navbar({ onHelpOpen }: NavbarProps) {
               )}
             </div>
 
-            {/* Help Button */}
+            {/* Help */}
             <button
               onClick={onHelpOpen}
-              className="flex items-center gap-1 px-2 py-1.5 rounded-lg text-sm border border-border hover:bg-slate-50 transition-colors"
+              className="flex items-center gap-1 px-1.5 sm:px-2 py-1.5 rounded-lg text-sm border border-border hover:bg-slate-50 transition-colors"
               title={t('nav.help')}
             >
-              <span className="material-icons" style={{ fontSize: 18 }}>
-                help_outline
-              </span>
+              <span className="material-icons" style={{ fontSize: 18 }}>help_outline</span>
               <span className="hidden sm:inline text-xs">{t('nav.help')}</span>
+            </button>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="sm:hidden flex items-center p-1.5 rounded-lg border border-border hover:bg-slate-50"
+            >
+              <span className="material-icons" style={{ fontSize: 20 }}>
+                {mobileMenuOpen ? 'close' : 'menu'}
+              </span>
             </button>
           </div>
         </div>
+
+        {/* Mobile Tabs */}
+        {mobileMenuOpen && (
+          <div className="sm:hidden border-t border-border py-2 flex flex-col gap-1">
+            {TABS.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => { setActiveTab(tab.id); setMobileMenuOpen(false); }}
+                className={`flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors w-full text-left ${
+                  activeTab === tab.id
+                    ? 'bg-primary text-white'
+                    : 'text-muted hover:bg-slate-100'
+                }`}
+              >
+                <span className="material-icons" style={{ fontSize: 18 }}>{tab.icon}</span>
+                {t(tab.label)}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
     </nav>
   );

@@ -1,3 +1,4 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-gov.min.css");
 @import "tailwindcss";
 
 @theme inline {
@@ -13,6 +14,7 @@
   --color-danger: #ef4444;
   --color-success: #22c55e;
   --color-warning: #f59e0b;
+  --font-pretendard: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
 }
 
 :root {
@@ -24,10 +26,13 @@
   box-sizing: border-box;
 }
 
+html, body {
+  font-family: var(--font-pretendard);
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 }
 
 /* Scrollbar */
@@ -74,10 +79,9 @@ body {
 
 /* Board tile styles */
 .board-tile {
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 .board-tile:hover {
-  transform: scale(1.03);
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
@@ -116,4 +120,16 @@ body {
 /* Player token */
 .player-token {
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Board responsive wrapper */
+.board-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 640px) {
+  .board-scale-wrapper {
+    transform-origin: top left;
+  }
 }
