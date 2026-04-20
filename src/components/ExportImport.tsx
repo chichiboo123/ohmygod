@@ -32,7 +32,7 @@ export default function ExportImport() {
       const success = importJSON(text);
       setMessage({
         type: success ? 'success' : 'error',
-        text: success ? t('export.importSuccess') : t('export.importError'),
+        text: success ? '✅ 게임을 불러왔어요!' : '❌ 파일이 올바르지 않아요.',
       });
       setTimeout(() => setMessage(null), 3000);
     };
@@ -51,29 +51,27 @@ export default function ExportImport() {
   };
 
   return (
-    <div className="bg-white rounded-xl border border-border p-4">
-      <h3 className="font-bold text-sm flex items-center gap-1 mb-3">
-        <span className="material-icons text-primary" style={{ fontSize: 18 }}>
-          import_export
-        </span>
-        {t('export.exportTitle')}
+    <div className="bg-white rounded-2xl border-2 border-border p-4">
+      <h3 className="font-bold text-sm flex items-center gap-2 mb-3 text-slate-600">
+        <span className="text-lg">📦</span>
+        게임 저장 / 불러오기
       </h3>
 
       <div className="flex flex-wrap gap-2">
         <button
           onClick={handleExport}
-          className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium border border-border hover:bg-slate-50 transition-colors"
+          className="btn-bounce flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border-2 border-border hover:bg-slate-50 transition-colors"
         >
-          <span className="material-icons" style={{ fontSize: 16 }}>download</span>
-          {t('export.exportJSON')}
+          <span>💾</span>
+          저장하기
         </button>
 
         <button
           onClick={() => fileRef.current?.click()}
-          className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium border border-border hover:bg-slate-50 transition-colors"
+          className="btn-bounce flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border-2 border-border hover:bg-slate-50 transition-colors"
         >
-          <span className="material-icons" style={{ fontSize: 16 }}>upload</span>
-          {t('export.importJSON')}
+          <span>📂</span>
+          불러오기
         </button>
         <input
           ref={fileRef}
@@ -85,21 +83,19 @@ export default function ExportImport() {
 
         <button
           onClick={handleShareLink}
-          className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium bg-primary text-white hover:bg-primary-hover transition-colors"
+          className="btn-bounce flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold bg-primary text-white hover:bg-primary-hover transition-colors shadow-sm"
         >
-          <span className="material-icons" style={{ fontSize: 16 }}>
-            {copied ? 'check' : 'link'}
-          </span>
-          {copied ? t('export.copied') : t('export.shareLink')}
+          <span>{copied ? '✅' : '🔗'}</span>
+          {copied ? '복사됐어요!' : '링크 공유'}
         </button>
       </div>
 
       {message && (
         <div
-          className={`mt-2 text-xs px-3 py-1.5 rounded-lg ${
+          className={`mt-3 text-sm px-4 py-2.5 rounded-xl font-medium ${
             message.type === 'success'
-              ? 'bg-success/10 text-success'
-              : 'bg-danger/10 text-danger'
+              ? 'bg-green-50 text-green-700 border-2 border-green-200'
+              : 'bg-red-50 text-red-700 border-2 border-red-200'
           }`}
         >
           {message.text}
