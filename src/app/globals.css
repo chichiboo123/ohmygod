@@ -3,22 +3,28 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-primary: #6366f1;
-  --color-primary-hover: #4f46e5;
-  --color-surface: #f8fafc;
+  --color-primary: #7c3aed;
+  --color-primary-hover: #6d28d9;
+  --color-primary-light: #ede9fe;
+  --color-surface: #fffdf5;
   --color-surface-dark: #1e293b;
-  --color-border: #e2e8f0;
+  --color-border: #e5e7eb;
   --color-border-dark: #334155;
-  --color-muted: #94a3b8;
+  --color-muted: #9ca3af;
   --color-danger: #ef4444;
-  --color-success: #22c55e;
-  --color-warning: #f59e0b;
-  --font-pretendard: 'Pretendard GOV', 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+  --color-success: #16a34a;
+  --color-warning: #d97706;
+  --color-fun-yellow: #fbbf24;
+  --color-fun-orange: #f97316;
+  --color-fun-pink: #ec4899;
+  --color-fun-teal: #0d9488;
+  --font-title: 'Black Han Sans', 'Pretendard GOV', sans-serif;
+  --font-body: 'Pretendard GOV', 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
 }
 
 :root {
-  --background: #f1f5f9;
-  --foreground: #0f172a;
+  --background: #fdf8f0;
+  --foreground: #1c1917;
 }
 
 * {
@@ -26,7 +32,8 @@
 }
 
 html, body {
-  font-family: var(--font-pretendard);
+  font-family: var(--font-body);
+  font-size: 16px;
 }
 
 body {
@@ -34,20 +41,28 @@ body {
   color: var(--foreground);
 }
 
+.font-title {
+  font-family: var(--font-title);
+}
+
+.font-body {
+  font-family: var(--font-body);
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 3px;
+  background: #d1d5db;
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #9ca3af;
 }
 
 /* Material Icons */
@@ -68,11 +83,11 @@ body {
 
 /* Tab transitions */
 .tab-content {
-  animation: fadeIn 0.2s ease-in-out;
+  animation: fadeIn 0.25s ease-in-out;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(4px); }
+  from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -81,20 +96,33 @@ body {
   transition: all 0.15s ease;
 }
 .board-tile:hover {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transform: scale(1.05);
 }
 
 /* Dice animation */
 @keyframes diceRoll {
-  0% { transform: rotate(0deg) scale(1); }
-  25% { transform: rotate(90deg) scale(1.1); }
-  50% { transform: rotate(180deg) scale(1); }
-  75% { transform: rotate(270deg) scale(1.1); }
+  0%   { transform: rotate(0deg) scale(1); }
+  20%  { transform: rotate(72deg) scale(1.15); }
+  40%  { transform: rotate(144deg) scale(1); }
+  60%  { transform: rotate(216deg) scale(1.15); }
+  80%  { transform: rotate(288deg) scale(1); }
   100% { transform: rotate(360deg) scale(1); }
 }
 
 .dice-rolling {
   animation: diceRoll 0.5s ease-in-out;
+}
+
+/* Fun bounce animation for buttons */
+@keyframes bounceIn {
+  0%   { transform: scale(0.95); }
+  60%  { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.btn-bounce:active {
+  animation: bounceIn 0.2s ease-in-out;
 }
 
 /* Event card flip */
@@ -131,4 +159,41 @@ body {
   .board-scale-wrapper {
     transform-origin: top left;
   }
+}
+
+/* Fun card shadow */
+.card-fun {
+  box-shadow: 0 4px 0 0 rgba(0,0,0,0.1);
+  transition: box-shadow 0.15s, transform 0.15s;
+}
+.card-fun:hover {
+  box-shadow: 0 6px 0 0 rgba(0,0,0,0.12);
+  transform: translateY(-2px);
+}
+
+/* Step indicator active glow */
+.step-active {
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.25);
+}
+
+/* Game over star animation */
+@keyframes starPop {
+  0%   { transform: scale(0) rotate(0deg); opacity: 0; }
+  60%  { transform: scale(1.3) rotate(15deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+.star-pop {
+  animation: starPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Shake for denied action */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-4px); }
+  40%       { transform: translateX(4px); }
+  60%       { transform: translateX(-4px); }
+  80%       { transform: translateX(4px); }
+}
+.shake {
+  animation: shake 0.4s ease-in-out;
 }

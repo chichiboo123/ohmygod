@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "게임의 신 | Oh My God",
-  description: "Design custom board games and play them interactively",
+  description: "나만의 보드게임을 만들어보세요!",
 };
 
 export default function RootLayout({
@@ -14,6 +14,12 @@ export default function RootLayout({
   return (
     <html lang="ko" className="h-full antialiased">
       <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap"
+          rel="stylesheet"
+        />
         <link
           rel="stylesheet"
           as="style"
@@ -26,7 +32,7 @@ export default function RootLayout({
         />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
       </head>
-      <body className="min-h-full flex flex-col font-[var(--font-pretendard)]">{children}</body>
+      <body className="min-h-full flex flex-col font-body">{children}</body>
     </html>
   );
 }
