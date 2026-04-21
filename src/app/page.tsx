@@ -9,9 +9,9 @@ import BoardEditorTab from '@/components/BoardEditorTab';
 import EventCardsTab from '@/components/EventCardsTab';
 import PlayModeTab from '@/components/PlayModeTab';
 import { useGameStore } from '@/store/gameStore';
+import ExportImport from '@/components/ExportImport';
 
 function AppContent() {
-  const { t } = useTranslation();
   const { activeTab, loadFromShareable, setActiveTab } = useGameStore();
   const [helpOpen, setHelpOpen] = useState(false);
 
