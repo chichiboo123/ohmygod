@@ -9,7 +9,6 @@ import BoardEditorTab from '@/components/BoardEditorTab';
 import EventCardsTab from '@/components/EventCardsTab';
 import PlayModeTab from '@/components/PlayModeTab';
 import { useGameStore } from '@/store/gameStore';
-import { useTranslation } from 'react-i18next';
 
 function AppContent() {
   const { t } = useTranslation();

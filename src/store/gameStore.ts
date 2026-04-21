@@ -414,7 +414,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
             newTiles[newPos] = { ...newTiles[newPos], owner: current.id, ownerTier: 1 };
             players[state.playState.currentPlayerIndex] = current;
             const nextIdx = findNextPlayer(players, state.playState.currentPlayerIndex);
-            const gameOverCheck = checkGameOver(state.settings, players, state.playState);
+            const gameOverCheck = checkGameOver(state.settings, players);
             return {
               tiles: newTiles,
               playState: { ...state.playState, diceResult: results, players, currentPlayerIndex: nextIdx, ...gameOverCheck },
@@ -428,7 +428,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
         players[state.playState.currentPlayerIndex] = current;
         const nextIdx = findNextPlayer(players, state.playState.currentPlayerIndex);
-        const gameOverCheck = checkGameOver(state.settings, players, state.playState);
+        const gameOverCheck = checkGameOver(state.settings, players);
 
         return {
           playState: { ...state.playState, diceResult: results, players, currentPlayerIndex: nextIdx, ...gameOverCheck },
@@ -456,7 +456,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       current.position = newPos;
       players[state.playState.currentPlayerIndex] = current;
       const nextIdx = findNextPlayer(players, state.playState.currentPlayerIndex);
-      const gameOverCheck = checkGameOver(state.settings, players, state.playState);
+      const gameOverCheck = checkGameOver(state.settings, players);
 
       return {
         playState: { ...state.playState, players, currentPlayerIndex: nextIdx, ...gameOverCheck },
@@ -558,8 +558,7 @@ function findNextPlayer(players: Player[], currentIdx: number): number {
 
 function checkGameOver(
   settings: GameSettings,
-  players: Player[],
-  playState: PlayState
+  players: Player[]
 ): Partial<PlayState> {
   const activePlayers = players.filter((p) => !p.isEliminated);
 

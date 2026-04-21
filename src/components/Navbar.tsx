@@ -82,7 +82,7 @@ export default function Navbar({ onHelpOpen }: NavbarProps) {
               >
                 <span className="text-base">{currentLang.flag}</span>
                 <span className="hidden sm:inline text-sm">{currentLang.label}</span>
-                <span className="material-icons text-muted" style={{ fontSize: 18 }}>expand_more</span>
+                <span className="text-muted text-xs">▾</span>
               </button>
               {langOpen && (
                 <>
