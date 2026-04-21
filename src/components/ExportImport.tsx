@@ -11,6 +11,7 @@ export default function ExportImport() {
   const shareInputRef = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [copied, setCopied] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const handleExport = () => {
     const json = exportJSON();
@@ -64,55 +65,72 @@ export default function ExportImport() {
   };
 
   return (
-    <div className="bg-white rounded-2xl border-2 border-border p-4">
-      <h3 className="font-bold text-sm flex items-center gap-2 mb-3 text-slate-600">
+    <div className="relative">
+      <button
+        onClick={() => setMenuOpen((prev) => !prev)}
+        aria-label={t('export.exportTitle')}
+        aria-haspopup="menu"
+        aria-expanded={menuOpen}
+        className="btn-bounce flex items-center justify-center w-11 h-11 rounded-xl border-2 border-border hover:bg-slate-50 transition-colors"
+        title={t('export.exportTitle')}
+      >
         <span className="text-lg">📦</span>
-        {t('export.exportTitle')}
-      </h3>
-
-      <div className="flex flex-wrap gap-2">
-        <button
-          onClick={handleExport}
-          className="btn-bounce flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border-2 border-border hover:bg-slate-50 transition-colors"
-        >
-          <span>💾</span>
-          {t('export.saveGame')}
-        </button>
-
-        <button
-          onClick={() => fileRef.current?.click()}
-          className="btn-bounce flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border-2 border-border hover:bg-slate-50 transition-colors"
-        >
-          <span>📂</span>
-          {t('export.importJSON')}
-        </button>
-        <input
-          ref={fileRef}
-          type="file"
-          accept=".json"
-          onChange={handleImport}
-          className="hidden"
-        />
-
-        <button
-          onClick={handleShareLink}
-          className="btn-bounce flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold bg-primary text-white hover:bg-primary-hover transition-colors shadow-sm"
-        >
-          <span>{copied ? '✅' : '🔗'}</span>
-          {copied ? t('export.copied') : t('export.shareLink')}
-        </button>
-      </div>
+      </button>
+      {menuOpen && (
+        <>
+          <div className="fixed inset-0 z-10" onClick={() => setMenuOpen(false)} />
+          <div className="absolute right-0 top-full mt-1 z-20 w-48 bg-white rounded-xl border-2 border-border shadow-xl p-2 space-y-1">
+            <button
+              onClick={() => {
+                handleExport();
+                setMenuOpen(false);
+              }}
+              className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-bold hover:bg-slate-50"
+            >
+              <span>💾</span>
+              {t('export.saveGame')}
+            </button>
+            <button
+              onClick={() => {
+                fileRef.current?.click();
+                setMenuOpen(false);
+              }}
+              className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-bold hover:bg-slate-50"
+            >
+              <span>📂</span>
+              {t('export.importJSON')}
+            </button>
+            <button
+              onClick={() => {
+                handleShareLink();
+                setMenuOpen(false);
+              }}
+              className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-bold hover:bg-primary-light text-primary"
+            >
+              <span>{copied ? '✅' : '🔗'}</span>
+              {copied ? t('export.copied') : t('export.shareLink')}
+            </button>
+          </div>
+        </>
+      )}
+      <input
+        ref={fileRef}
+        type="file"
+        accept=".json"
+        onChange={handleImport}
+        className="hidden"
+      />
       <input
         ref={shareInputRef}
         readOnly
         aria-label={t('export.shareLink')}
-        className="mt-2 w-full px-3 py-2 text-xs border border-border rounded-lg bg-slate-50"
+        className="sr-only"
         placeholder={t('export.copyFallback')}
       />
 
       {message && (
         <div
-          className={`mt-3 text-sm px-4 py-2.5 rounded-xl font-medium ${
+          className={`absolute right-0 top-full mt-2 z-30 w-72 text-sm px-4 py-2.5 rounded-xl font-medium ${
             message.type === 'success'
               ? 'bg-green-50 text-green-700 border-2 border-green-200'
               : 'bg-red-50 text-red-700 border-2 border-red-200'

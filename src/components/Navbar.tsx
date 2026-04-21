@@ -3,6 +3,7 @@
 import { useTranslation } from 'react-i18next';
 import { useGameStore } from '@/store/gameStore';
 import { useState } from 'react';
+import ExportImport from '@/components/ExportImport';
 
 interface NavbarProps {
   onHelpOpen: () => void;
@@ -105,6 +106,9 @@ export default function Navbar({ onHelpOpen }: NavbarProps) {
                 </>
               )}
             </div>
+
+            {/* Help */}
+            <ExportImport />
 
             {/* Help */}
             <button
