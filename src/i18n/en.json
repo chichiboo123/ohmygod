@@ -9,7 +9,9 @@
     "eventCards": "Event Cards",
     "playMode": "Play Mode",
     "help": "Help",
-    "language": "Language"
+    "language": "Language",
+    "mainNavigation": "Main navigation",
+    "toggleMenu": "Open/close menu"
   },
   "settings": {
     "title": "Basic Settings",
@@ -73,7 +75,9 @@
     "backColor": "Card Back Color",
     "emoji": "Card Emoji",
     "addCard": "Add Card",
+    "createFirst": "Create first card",
     "removeCard": "Remove Card",
+    "confirmDelete": "Do you want to delete this card?",
     "preview": "Preview",
     "front": "Front",
     "back": "Back",
@@ -116,7 +120,10 @@
     "duplicateEdit": "Duplicate & Edit",
     "importSuccess": "Game loaded successfully!",
     "importError": "Invalid file format.",
-    "exportTitle": "Export / Import"
+    "exportTitle": "Export / Import",
+    "saveGame": "Save Game",
+    "copyFailed": "Auto-copy failed. Please copy from the input below.",
+    "copyFallback": "Share link will appear here"
   },
   "help": {
     "title": "How to Use",
@@ -131,7 +138,9 @@
     "step4Desc": "After all settings are done, start the game in the 'Play Mode' tab. Toggle between Auto and Manual modes.",
     "step5Title": "Step 5: Share & Export",
     "step5Desc": "Export the game as JSON or share via link. Others can play directly through the shared link.",
-    "close": "Close"
+    "close": "Close",
+    "followSteps": "Follow these steps to get started quickly!",
+    "ctaStart": "Got it! Let's start 🚀"
   },
   "common": {
     "save": "Save",
@@ -139,6 +148,7 @@
     "delete": "Delete",
     "edit": "Edit",
     "confirm": "Confirm",
-    "reset": "Reset"
+    "reset": "Reset",
+    "stepProgress": "Step {{current}} of {{total}} 🌟"
   }
 }

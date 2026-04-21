@@ -3,6 +3,7 @@
 import { useTranslation } from 'react-i18next';
 import { useGameStore } from '@/store/gameStore';
 import { useState } from 'react';
+import ExportImport from '@/components/ExportImport';
 
 interface NavbarProps {
   onHelpOpen: () => void;
@@ -30,7 +31,7 @@ export default function Navbar({ onHelpOpen }: NavbarProps) {
   const currentLang = LANGUAGES.find((l) => l.code === i18n.language) || LANGUAGES[0];
 
   return (
-    <nav className="bg-white border-b-4 border-primary sticky top-0 z-50 shadow-md">
+    <nav className="bg-white border-b-4 border-primary sticky top-0 z-50 shadow-md" aria-label={t('nav.mainNavigation')}>
       <div className="max-w-7xl mx-auto px-3 sm:px-4">
         <div className="flex items-center justify-between h-16 sm:h-18">
           {/* Logo */}
@@ -74,11 +75,14 @@ export default function Navbar({ onHelpOpen }: NavbarProps) {
             <div className="relative">
               <button
                 onClick={() => setLangOpen(!langOpen)}
+                aria-label={t('nav.language')}
+                aria-haspopup="menu"
+                aria-expanded={langOpen}
                 className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm border-2 border-border hover:bg-slate-50 transition-colors font-medium"
               >
                 <span className="text-base">{currentLang.flag}</span>
                 <span className="hidden sm:inline text-sm">{currentLang.label}</span>
-                <span className="material-icons text-muted" style={{ fontSize: 18 }}>expand_more</span>
+                <span className="text-muted text-xs">▾</span>
               </button>
               {langOpen && (
                 <>
@@ -88,6 +92,8 @@ export default function Navbar({ onHelpOpen }: NavbarProps) {
                       <button
                         key={lang.code}
                         onClick={() => { i18n.changeLanguage(lang.code); setLangOpen(false); }}
+                        role="menuitemradio"
+                        aria-checked={i18n.language === lang.code}
                         className={`w-full flex items-center gap-2 px-4 py-3 text-sm font-medium hover:bg-primary-light transition-colors ${
                           i18n.language === lang.code ? 'text-primary bg-primary-light' : 'text-foreground'
                         }`}
@@ -102,8 +108,12 @@ export default function Navbar({ onHelpOpen }: NavbarProps) {
             </div>
 
             {/* Help */}
+            <ExportImport />
+
+            {/* Help */}
             <button
               onClick={onHelpOpen}
+              aria-label={t('nav.help')}
               className="btn-bounce flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm border-2 border-border hover:bg-yellow-50 hover:border-yellow-300 transition-colors font-medium"
               title={t('nav.help')}
             >
@@ -114,6 +124,8 @@ export default function Navbar({ onHelpOpen }: NavbarProps) {
             {/* Mobile Menu Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label={t('nav.toggleMenu')}
+              aria-expanded={mobileMenuOpen}
               className="sm:hidden flex items-center justify-center w-11 h-11 rounded-xl border-2 border-border hover:bg-slate-50 transition-colors"
             >
               <span className="text-xl">{mobileMenuOpen ? '✕' : '☰'}</span>

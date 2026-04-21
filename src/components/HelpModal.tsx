@@ -1,6 +1,7 @@
 'use client';
 
 import { useTranslation } from 'react-i18next';
+import { useEffect } from 'react';
 
 interface HelpModalProps {
   isOpen: boolean;
@@ -18,10 +19,19 @@ const STEPS = [
 export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
   const { t } = useTranslation();
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-label={t('help.title')}>
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
       <div className="relative bg-white rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto border-2 border-border">
         {/* Header */}
@@ -32,6 +42,7 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
           </div>
           <button
             onClick={onClose}
+            aria-label={t('help.close')}
             className="w-10 h-10 rounded-xl hover:bg-slate-100 flex items-center justify-center text-xl transition-colors"
           >
             ✕
@@ -45,7 +56,7 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
             <p className="font-bold text-lg text-primary">
               {t('help.welcome')}
             </p>
-            <p className="text-sm text-muted mt-1">아래 순서대로 따라하면 쉬워요!</p>
+            <p className="text-sm text-muted mt-1">{t('help.followSteps')}</p>
           </div>
 
           {STEPS.map((step, i) => (
@@ -68,9 +79,10 @@ export default function HelpModal({ isOpen, onClose }: HelpModalProps) {
         <div className="sticky bottom-0 bg-white rounded-b-3xl border-t-2 border-border px-6 py-4">
           <button
             onClick={onClose}
+            aria-label={t('help.close')}
             className="btn-bounce w-full py-3.5 bg-primary text-white rounded-xl text-base font-bold hover:bg-primary-hover transition-colors shadow-md"
           >
-            알겠어요! 시작할게요 🚀
+            {t('help.ctaStart')}
           </button>
         </div>
       </div>
