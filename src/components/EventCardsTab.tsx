@@ -34,10 +34,11 @@ export default function EventCardsTab() {
         </div>
         <button
           onClick={addCard}
+          aria-label={t('cards.addCard')}
           className="btn-bounce flex items-center gap-2 px-5 py-3 rounded-xl text-sm font-bold bg-primary text-white hover:bg-primary-hover transition-colors shadow-md"
         >
           <span className="text-lg">➕</span>
-          카드 추가
+          {t('cards.addCard')}
         </button>
       </div>
 
@@ -45,13 +46,14 @@ export default function EventCardsTab() {
         <div className="bg-white rounded-2xl border-2 border-border p-12 text-center card-fun">
           <span className="text-7xl block mb-4">🃏</span>
           <p className="text-lg font-bold text-slate-500 mb-2">아직 카드가 없어요!</p>
-          <p className="text-sm text-muted mb-5">위의 '카드 추가' 버튼을 눌러보세요</p>
+          <p className="text-sm text-muted mb-5">{t('cards.noCards')}</p>
           <button
             onClick={addCard}
+            aria-label={t('cards.addCard')}
             className="btn-bounce inline-flex items-center gap-2 px-6 py-3 rounded-xl text-base font-bold bg-primary text-white hover:bg-primary-hover shadow-md"
           >
             <span className="text-xl">➕</span>
-            첫 번째 카드 만들기
+            {t('cards.createFirst')}
           </button>
         </div>
       ) : (
@@ -65,6 +67,8 @@ export default function EventCardsTab() {
                   <div className="relative">
                     <button
                       onClick={() => setEmojiPickerOpen(emojiPickerOpen === card.id ? null : card.id)}
+                      aria-label={t('cards.emoji')}
+                      aria-expanded={emojiPickerOpen === card.id}
                       className="btn-bounce w-14 h-14 rounded-xl border-2 border-border flex items-center justify-center text-3xl hover:border-primary hover:scale-110 transition-all shadow-sm"
                     >
                       {card.emoji}
@@ -101,7 +105,10 @@ export default function EventCardsTab() {
                   </div>
                 </div>
                 <button
-                  onClick={() => removeCard(card.id)}
+                  onClick={() => {
+                    if (window.confirm(t('cards.confirmDelete'))) removeCard(card.id);
+                  }}
+                  aria-label={t('cards.removeCard')}
                   className="ml-2 w-10 h-10 rounded-xl text-danger/60 hover:text-danger hover:bg-danger/10 flex items-center justify-center transition-colors text-xl"
                 >
                   🗑️

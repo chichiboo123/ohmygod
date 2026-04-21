@@ -10,15 +10,17 @@ import EventCardsTab from '@/components/EventCardsTab';
 import PlayModeTab from '@/components/PlayModeTab';
 import ExportImport from '@/components/ExportImport';
 import { useGameStore } from '@/store/gameStore';
+import { useTranslation } from 'react-i18next';
 
 const STEP_GUIDE = [
-  { id: 'settings', emoji: '⚙️', label: '기본 설정', color: 'bg-violet-500' },
-  { id: 'board', emoji: '🗺️', label: '보드판 편집', color: 'bg-blue-500' },
-  { id: 'cards', emoji: '🃏', label: '이벤트 카드', color: 'bg-orange-500' },
-  { id: 'play', emoji: '🎮', label: '게임 플레이', color: 'bg-green-500' },
+  { id: 'settings', emoji: '⚙️', labelKey: 'nav.settings', color: 'bg-violet-500' },
+  { id: 'board', emoji: '🗺️', labelKey: 'nav.boardEditor', color: 'bg-blue-500' },
+  { id: 'cards', emoji: '🃏', labelKey: 'nav.eventCards', color: 'bg-orange-500' },
+  { id: 'play', emoji: '🎮', labelKey: 'nav.playMode', color: 'bg-green-500' },
 ];
 
 function AppContent() {
+  const { t } = useTranslation();
   const { activeTab, loadFromShareable, setActiveTab } = useGameStore();
   const [helpOpen, setHelpOpen] = useState(false);
 
@@ -63,7 +65,7 @@ function AppContent() {
                   }`}
                 >
                   <span className="text-base sm:text-xl">{step.emoji}</span>
-                  <span className="hidden sm:inline">{step.label}</span>
+                  <span className="hidden sm:inline">{t(step.labelKey)}</span>
                   <span
                     className={`w-5 h-5 rounded-full text-[10px] font-bold flex items-center justify-center ${
                       isActive ? 'bg-white/30' : isDone ? 'bg-green-100 text-green-600' : 'bg-slate-200 text-slate-400'
@@ -76,17 +78,20 @@ function AppContent() {
             })}
           </div>
           <p className="text-center text-xs text-muted mt-1.5 font-medium">
-            {currentStep}단계 / 4단계 진행 중 🌟
+            {t('common.stepProgress', { current: currentStep, total: STEP_GUIDE.length })}
           </p>
         </div>
 
         {/* Export/Import bar */}
-        <div className="max-w-6xl mx-auto mb-4">
+        <div className="max-w-6xl mx-auto mb-4 hidden sm:block">
           <ExportImport />
         </div>
 
         {/* Tab Content */}
         <div className="tab-content">
+          <div className="sm:hidden mb-4">
+            <ExportImport />
+          </div>
           {activeTab === 'settings' && <SettingsTab />}
           {activeTab === 'board' && <BoardEditorTab />}
           {activeTab === 'cards' && <EventCardsTab />}

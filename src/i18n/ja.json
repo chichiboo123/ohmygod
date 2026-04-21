@@ -9,7 +9,9 @@
     "eventCards": "イベントカード",
     "playMode": "プレイモード",
     "help": "ヘルプ",
-    "language": "言語"
+    "language": "言語",
+    "mainNavigation": "メインナビゲーション",
+    "toggleMenu": "メニューを開く/閉じる"
   },
   "settings": {
     "title": "基本設定",
@@ -73,7 +75,9 @@
     "backColor": "カード裏面の色",
     "emoji": "カード絵文字",
     "addCard": "カード追加",
+    "createFirst": "最初のカードを作成",
     "removeCard": "カード削除",
+    "confirmDelete": "このカードを削除しますか？",
     "preview": "プレビュー",
     "front": "表面",
     "back": "裏面",
@@ -116,7 +120,10 @@
     "duplicateEdit": "複製して編集",
     "importSuccess": "ゲームを正常に読み込みました！",
     "importError": "無効なファイル形式です。",
-    "exportTitle": "エクスポート / インポート"
+    "exportTitle": "エクスポート / インポート",
+    "saveGame": "保存",
+    "copyFailed": "自動コピーに失敗しました。下の入力欄から手動でコピーしてください。",
+    "copyFallback": "共有リンクがここに表示されます"
   },
   "help": {
     "title": "使い方ガイド",
@@ -131,7 +138,9 @@
     "step4Desc": "すべての設定が完了したら、「プレイモード」タブでゲームを開始します。自動/手動モードを切り替えられます。",
     "step5Title": "ステップ5：共有とエクスポート",
     "step5Desc": "ゲームをJSONでエクスポートしたり、リンクで共有できます。共有リンクから直接プレイできます。",
-    "close": "閉じる"
+    "close": "閉じる",
+    "followSteps": "以下の順番で進めると簡単です！",
+    "ctaStart": "わかりました！はじめます 🚀"
   },
   "common": {
     "save": "保存",
@@ -139,6 +148,7 @@
     "delete": "削除",
     "edit": "編集",
     "confirm": "確認",
-    "reset": "リセット"
+    "reset": "リセット",
+    "stepProgress": "{{total}}ステップ中 {{current}} ステップ目 🌟"
   }
 }

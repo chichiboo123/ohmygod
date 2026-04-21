@@ -9,7 +9,9 @@
     "eventCards": "이벤트 카드",
     "playMode": "게임 플레이",
     "help": "도움말",
-    "language": "언어"
+    "language": "언어",
+    "mainNavigation": "메인 내비게이션",
+    "toggleMenu": "메뉴 열기/닫기"
   },
   "settings": {
     "title": "기본 설정",
@@ -73,7 +75,9 @@
     "backColor": "카드 뒷면 색상",
     "emoji": "카드 이모지",
     "addCard": "카드 추가",
+    "createFirst": "첫 번째 카드 만들기",
     "removeCard": "카드 삭제",
+    "confirmDelete": "이 카드를 삭제할까요?",
     "preview": "미리보기",
     "front": "앞면",
     "back": "뒷면",
@@ -116,7 +120,10 @@
     "duplicateEdit": "복제 후 편집",
     "importSuccess": "게임을 성공적으로 불러왔습니다!",
     "importError": "잘못된 파일 형식입니다.",
-    "exportTitle": "내보내기 / 가져오기"
+    "exportTitle": "내보내기 / 가져오기",
+    "saveGame": "저장하기",
+    "copyFailed": "자동 복사에 실패했어요. 아래 입력창에서 직접 복사해 주세요.",
+    "copyFallback": "공유 링크가 여기에 표시됩니다"
   },
   "help": {
     "title": "사용 가이드",
@@ -131,7 +138,9 @@
     "step4Desc": "모든 설정을 마친 후 '게임 플레이' 탭에서 게임을 시작하세요. 자동/수동 모드를 전환할 수 있습니다.",
     "step5Title": "5단계: 공유 및 내보내기",
     "step5Desc": "게임을 JSON으로 내보내거나 링크로 공유할 수 있습니다. 다른 사람이 링크를 통해 바로 플레이할 수 있습니다.",
-    "close": "닫기"
+    "close": "닫기",
+    "followSteps": "아래 순서대로 따라하면 쉬워요!",
+    "ctaStart": "알겠어요! 시작할게요 🚀"
   },
   "common": {
     "save": "저장",
@@ -139,6 +148,7 @@
     "delete": "삭제",
     "edit": "편집",
     "confirm": "확인",
-    "reset": "초기화"
+    "reset": "초기화",
+    "stepProgress": "{{current}}단계 / {{total}}단계 진행 중 🌟"
   }
 }

@@ -8,6 +8,7 @@ export default function ExportImport() {
   const { t } = useTranslation();
   const { exportJSON, importJSON, getShareableState } = useGameStore();
   const fileRef = useRef<HTMLInputElement>(null);
+  const shareInputRef = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [copied, setCopied] = useState(false);
 
@@ -44,17 +45,29 @@ export default function ExportImport() {
     const state = getShareableState();
     const encoded = btoa(encodeURIComponent(JSON.stringify(state)));
     const url = `${window.location.origin}${window.location.pathname}?data=${encoded}`;
-    navigator.clipboard.writeText(url).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    });
+    navigator.clipboard.writeText(url)
+      .then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      })
+      .catch(() => {
+        if (shareInputRef.current) {
+          shareInputRef.current.value = url;
+          shareInputRef.current.select();
+        }
+        setMessage({
+          type: 'error',
+          text: t('export.copyFailed'),
+        });
+        setTimeout(() => setMessage(null), 4000);
+      });
   };
 
   return (
     <div className="bg-white rounded-2xl border-2 border-border p-4">
       <h3 className="font-bold text-sm flex items-center gap-2 mb-3 text-slate-600">
         <span className="text-lg">📦</span>
-        게임 저장 / 불러오기
+        {t('export.exportTitle')}
       </h3>
 
       <div className="flex flex-wrap gap-2">
@@ -63,7 +76,7 @@ export default function ExportImport() {
           className="btn-bounce flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border-2 border-border hover:bg-slate-50 transition-colors"
         >
           <span>💾</span>
-          저장하기
+          {t('export.saveGame')}
         </button>
 
         <button
@@ -71,7 +84,7 @@ export default function ExportImport() {
           className="btn-bounce flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border-2 border-border hover:bg-slate-50 transition-colors"
         >
           <span>📂</span>
-          불러오기
+          {t('export.importJSON')}
         </button>
         <input
           ref={fileRef}
@@ -86,9 +99,16 @@ export default function ExportImport() {
           className="btn-bounce flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold bg-primary text-white hover:bg-primary-hover transition-colors shadow-sm"
         >
           <span>{copied ? '✅' : '🔗'}</span>
-          {copied ? '복사됐어요!' : '링크 공유'}
+          {copied ? t('export.copied') : t('export.shareLink')}
         </button>
       </div>
+      <input
+        ref={shareInputRef}
+        readOnly
+        aria-label={t('export.shareLink')}
+        className="mt-2 w-full px-3 py-2 text-xs border border-border rounded-lg bg-slate-50"
+        placeholder={t('export.copyFallback')}
+      />
 
       {message && (
         <div
