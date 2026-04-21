@@ -11,6 +11,7 @@ import PlayModeTab from '@/components/PlayModeTab';
 import { useGameStore } from '@/store/gameStore';
 
 function AppContent() {
+  const { t } = useTranslation();
   const { activeTab, loadFromShareable, setActiveTab } = useGameStore();
   const [helpOpen, setHelpOpen] = useState(false);
 
@@ -35,6 +36,9 @@ function AppContent() {
       <main className="flex-1 px-3 pt-4 pb-6 md:px-5 md:pt-5">
         {/* Tab Content */}
         <div className="tab-content">
+          <div className="sm:hidden mb-4">
+            <ExportImport />
+          </div>
           {activeTab === 'settings' && <SettingsTab />}
           {activeTab === 'board' && <BoardEditorTab />}
           {activeTab === 'cards' && <EventCardsTab />}
