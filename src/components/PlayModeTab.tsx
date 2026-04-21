@@ -101,6 +101,7 @@ export default function PlayModeTab() {
         <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={toggleAutoMode}
+            aria-label={playState.isAutoMode ? t('play.autoMode') : t('play.manualMode')}
             className={`btn-bounce flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border-2 transition-colors ${
               playState.isAutoMode
                 ? 'border-primary bg-primary-light text-primary'
@@ -115,17 +116,17 @@ export default function PlayModeTab() {
           {playState.isPaused ? (
             <button onClick={resumeGame} className="btn-bounce flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold bg-green-500 text-white shadow-md">
               <span className="text-lg">▶️</span>
-              <span className="hidden sm:inline">계속하기</span>
+              <span className="hidden sm:inline">{t('play.resume')}</span>
             </button>
           ) : (
             <button onClick={pauseGame} className="btn-bounce flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold bg-warning text-white shadow-md">
               <span className="text-lg">⏸️</span>
-              <span className="hidden sm:inline">일시정지</span>
+              <span className="hidden sm:inline">{t('play.pause')}</span>
             </button>
           )}
           <button onClick={resetGame} className="btn-bounce flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold bg-danger text-white shadow-md">
             <span className="text-lg">⏹️</span>
-            <span className="hidden sm:inline">초기화</span>
+            <span className="hidden sm:inline">{t('play.reset')}</span>
           </button>
         </div>
       </div>
@@ -253,10 +254,11 @@ export default function PlayModeTab() {
                 <button
                   onClick={handleRollDice}
                   disabled={playState.isPaused || playState.isGameOver || diceAnimating}
+                  aria-label={t('play.rollDice')}
                   className="btn-bounce flex items-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 bg-primary text-white rounded-2xl font-bold text-base sm:text-lg hover:bg-primary-hover transition-colors disabled:opacity-50 shadow-lg"
                 >
                   <span className={`text-2xl ${diceAnimating ? 'dice-rolling inline-block' : ''}`}>🎲</span>
-                  주사위 굴리기!
+                  {t('play.rollDice')}
                 </button>
 
                 {/* Dice Result */}
@@ -285,11 +287,12 @@ export default function PlayModeTab() {
                 <button
                   onClick={handleDrawEvent}
                   disabled={playState.isPaused || playState.isGameOver}
+                  aria-label={t('play.drawEvent')}
                   className="btn-bounce flex items-center gap-2 px-4 py-3 border-2 border-orange-300 bg-orange-50 rounded-xl text-sm sm:text-base font-bold text-orange-600 hover:bg-orange-100 disabled:opacity-50 transition-colors"
                 >
                   <span className="text-xl">🃏</span>
-                  <span className="hidden sm:inline">이벤트 카드</span>
-                  <span className="sm:hidden">카드</span>
+                  <span className="hidden sm:inline">{t('play.drawEvent')}</span>
+                  <span className="sm:hidden">{t('cards.title')}</span>
                 </button>
 
                 {/* Manual Move Buttons */}
@@ -297,12 +300,14 @@ export default function PlayModeTab() {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => movePlayer(-1)}
+                      aria-label={t('play.moveBackward')}
                       className="btn-bounce w-11 h-11 border-2 border-border rounded-xl hover:bg-slate-50 flex items-center justify-center text-xl transition-colors"
                     >
                       ◀️
                     </button>
                     <button
                       onClick={() => movePlayer(1)}
+                      aria-label={t('play.moveForward')}
                       className="btn-bounce w-11 h-11 border-2 border-border rounded-xl hover:bg-slate-50 flex items-center justify-center text-xl transition-colors"
                     >
                       ▶️
